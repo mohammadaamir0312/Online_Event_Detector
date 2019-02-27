@@ -2,7 +2,7 @@ import math
 
 num_of_clusters = 0  # stores the number of clusters formed
 clusters = []  # stores all the clusters with Cluster Id as the index of the list
-threshold = 0.5  # threshold for finding the similarity
+threshold = 0.7  # threshold for finding the similarity
 
 
 # cluster object
@@ -16,11 +16,18 @@ class Cluster:
 
     def add_tweet(self, tweet_id, tf_idf_list):
         self.num_of_tweets = self.num_of_tweets + 1
-        for eachWord in self.tf_idf_list.keys():
-            self.tf_idf_list[eachWord] = (self.tf_idf_list[eachWord] * (self.num_of_tweets - 1) + tf_idf_list[tweet_id][
-                eachWord]) / self.num_of_tweets
-            print("ffff " + str(self.tf_idf_list[eachWord]))
+        for each_word in tf_idf_list[tweet_id].keys():
+            if each_word not in self.tf_idf_list.keys():
+                self.tf_idf_list[each_word] = 0.0
+            else:
+                self.tf_idf_list[each_word] = (self.tf_idf_list[each_word] * (self.num_of_tweets - 1) +
+                                               tf_idf_list[tweet_id][each_word]) / self.num_of_tweets
         self.tweet_ids.append(tweet_id)
+
+    def update_tf_idf_list(self, tweet_id, tf_idf_list):
+        for each_word in tf_idf_list[tweet_id].keys():
+            if each_word not in self.tf_idf_list.keys():
+                self.tf_idf_list[each_word] = 0.0
 
     def get_tf_idf_list(self):
         return self.tf_idf_list
@@ -48,6 +55,7 @@ class Cluster:
 # function that returns the similarity between a cluster and a tweet
 def similarity_fun(cluster_index, tweet_id, tf_idf_list):
     cluster = clusters[cluster_index]
+    cluster.update_tf_idf_list(tweet_id, tf_idf_list)
     cluster_vector = cluster.get_tf_idf_list()
     tweet_vector = tf_idf_list[tweet_id]
     cluster_vector_magnitude = 0.0
@@ -55,14 +63,12 @@ def similarity_fun(cluster_index, tweet_id, tf_idf_list):
     dot_product = 0.0
 
     for each_word in cluster_vector.keys():
-        print("dddd %.15f" % tweet_vector[each_word])
         cluster_vector_magnitude = cluster_vector_magnitude + cluster_vector[each_word] * cluster_vector[each_word]
         tweet_vector_magnitude = tweet_vector_magnitude + tweet_vector[each_word] * tweet_vector[each_word]
         dot_product = dot_product + cluster_vector[each_word] * tweet_vector[each_word]
 
     cluster_vector_magnitude = math.sqrt(cluster_vector_magnitude)
     tweet_vector_magnitude = math.sqrt(tweet_vector_magnitude)
-    print(cluster_vector_magnitude, tweet_vector_magnitude, tweet_id)
     similarity = dot_product / (cluster_vector_magnitude * tweet_vector_magnitude)
     return similarity
 

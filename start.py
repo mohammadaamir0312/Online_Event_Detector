@@ -54,9 +54,7 @@ def process_tweet(tweet):
     global num_of_tweets, word_set, tweet_words, word_list
     tweet = tweet.replace('\n', '')
     tweets.append(tweet)
-    print(tweet)
     tweet_text = (str(tweet.encode('ascii', 'ignore')))
-    print(tweet_text)
     tweet_text = tweet_text.replace('b"', '').replace("b'", '')
     print(tweet_text)  # input from data set
     temp_tweet_word_list = (
@@ -98,7 +96,16 @@ lemmatizer = WordNetLemmatizer()
 tweet_file = open("docs/dataset.txt", "r")
 for eachTweet in tweet_file:
     process_tweet(eachTweet)
-    if num_of_tweets == 5:
+    print("tweet count = ", num_of_tweets)
+    if num_of_tweets == 200:
         break
 
 print(Cluster.num_of_clusters)
+cluster_output_file = open("docs/cluster_output.txt", "w")
+for each_cluster in Cluster.clusters:
+    cluster_output_file.write(str(each_cluster.get_cluster_id()))
+    cluster_output_file.write("\n" + str(each_cluster.get_tweet_ids()) + "\n")
+    for each_tweet in each_cluster.get_tweet_ids():
+        cluster_output_file.write(tweets[each_tweet] + "\n")
+    cluster_output_file.write("\n_________________________\n")
+
