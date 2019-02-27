@@ -1,5 +1,4 @@
 from nltk.stem import WordNetLemmatizer
-import tweepy
 import Credentials
 import re
 import math
