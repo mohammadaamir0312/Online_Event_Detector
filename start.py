@@ -87,7 +87,7 @@ def process_tweet(tweet):
             tf_idf_output_file.write("%20.15F   |" % eachDoc[eachWord])
         tf_idf_output_file.write("\n")
 
-    Cluster.allot_cluster(num_of_tweets, tf_list)
+    Cluster.allot_cluster(num_of_tweets, tf_list, tf_idf_list, 1)
     num_of_tweets = num_of_tweets + 1
     return True
 
@@ -97,7 +97,7 @@ tweet_file = open("docs/dataset.txt", "r")
 for eachTweet in tweet_file:
     process_tweet(eachTweet)
     print("tweet count = ", num_of_tweets)
-    if num_of_tweets == 200:
+    if num_of_tweets == 100:
         break
 
 print(Cluster.num_of_clusters)
